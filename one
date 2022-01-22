@@ -1,12 +1,12 @@
 #!/bin/bash
 
-echo "||| one : network"
-
-ip link
-ping google.com -c 3
-timedatectl set-ntp true
-
-echo "||| time to choose your partitions"
-echo "||| run 'cfdisk' to setup a SINGLE partition for root/boot/home..."
-echo "||| they will all be flatmates, sharing one partition"
-echo "||| then run 'bash two /dev/root-partition /dev/esp-partition'"
+clear
+echo "|||| help"
+echo ""
+echo " 1. connect to ethernet or usb tether"
+echo " 2. choose a partition for root"
+echo " 3. choose a partition for esp"
+echo "    - esp partition will be mounted at /esp"
+echo "..run 'cfdisk' if you gotta rearrange partitions"
+echo " 4. run 'bash install /dev/root /dev/esp'"
+lsblk
