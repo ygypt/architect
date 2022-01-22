@@ -1,0 +1,40 @@
+#!/bin/bash
+
+echo "||| two : bootstrap"
+
+if [ $1 -eq 0 ]; then
+	echo "||| no arguments provided"
+	echo "||| you gotta type 'bash second /dev/sdX'"
+	echo "||| for instance 'bash second /dev/sda1'"
+	exit 1
+fi
+
+mkfs.ext4 $1
+mount $1 /mnt
+mkdir /mnt/esp
+mount $2 /mnt/esp
+
+pacstrap /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode zsh neovim pipewire pipewire-alsa pipewire-jack pipewire-pulse networkmanager grub efibootmgr
+
+genfstab -U /mnt >> /mnt/etc/fstab
+
+inarch () {
+	if [ $1 -eq 0 ]; then
+		echo "i dont feel so good"
+        	exit 1
+	fi
+
+	arch-chroot /mnt $1
+}
+
+inarch "ln -sf /usr/share/zoneinfo/UTC /etc/localtime"
+inarch "hwclock --systohc"
+inarch "echo en_US.UTF-8 UTF-8 >> /etc/locale.gen"
+inarch "locale-gen"
+inarch "touch /etc/locale.conf"
+inarch "echo LANG=en_US.UTF-8 >> /etc/locale.conf"
+inarch "echo KEYMAP=us >> /etc/vconsole.conf"
+inarch "touch /etc/hostname"
+inarch "echo ychor >> /etc/hostname"
+inarch "passwd"
+inarch "grub-install --target=x86_64-efi --efi-directory=/esp --bootloader-id=GRUB"
