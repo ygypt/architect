@@ -2,10 +2,18 @@
 
 echo "||| two : bootstrap"
 
+whoops () {
+	echo "||| no $1 arg provided"
+	echo "||| you gotta type 'bash second /dev/root-partition /dev/esp-partition'"
+	exit 1
+}
+
 if [ $1 -eq 0 ]; then
-	echo "||| no arguments provided"
-	echo "||| you gotta type 'bash second /dev/sdX'"
-	echo "||| for instance 'bash second /dev/sda1'"
+	whoops "first"
+	exit 1
+fi
+if [ $2 -eq 0 ]; then
+	whoops "second"
 	exit 1
 fi
 
