@@ -9,4 +9,4 @@ timedatectl set-ntp true
 echo "||| time to choose your partitions"
 echo "||| run 'cfdisk' to setup a SINGLE partition for root/boot/home..."
 echo "||| they will all be flatmates, sharing one partition"
-echo "||| then run 'bash two /dev/sdX'"
+echo "||| then run 'bash two /dev/root-partition /dev/esp-partition'"
