@@ -1,25 +1,56 @@
 #!/bin/bash
 
-echo "||| two : bootstrap"
+clear
 
+# colors
+NOC='\033[0m'       # Reset
+BLA='\033[0;30m'    # Black
+RED='\033[0;31m'    # Red
+GRE='\033[0;32m'    # Green
+YEL='\033[0;33m'    # Yellow
+BLU='\033[0;34m'    # Blue
+PUR='\033[0;35m'    # Purple
+CYA='\033[0;36m'    # Cyan
+WHI='\033[0;37m'    # White
+
+# arg checker
 whoops () {
-	echo "||| no $1 arg provided"
-	echo "||| you gotta type 'bash second /dev/root-partition /dev/esp-partition'"
+	echo -e "${WHI}$1 args provided${NOC}"
+	echo "run 'bash help'"
 	exit 1
 }
+if [ $# -lt 2]; then
+	whoops "too few"
+fi
+if [ $# -gt 2 ]; then
+	whoops "too many"
+fi
 
-if [ $1 -eq 0 ]; then
-	whoops "first"
-	exit 1
-fi
-if [ $2 -eq 0 ]; then
-	whoops "second"
-	exit 1
-fi
+# are you sure
+lsblk
+echo -e "${RED}"
+echo "GOING TO REFORMAT AND INSTALL $1 WITH ROOT"
+echo "GOING TO REFORMAT AND INSTALL $2 WITH ESP"
+echo -e "${NOC}"
+while true; do
+    echo -e "${RED}"
+    read -p "ARE YOU SURE YOU WANT TO PROCEED? (y/N)" yn
+    echo -e "${NOC}"
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo -e "${WHI}Please answer yes or no${NOC}";;
+    esac
+done
+
+#
+# install
+#
 
 mkfs.ext4 $1
 mount $1 /mnt
 mkdir /mnt/esp
+mkfs.fat -F 32 $2
 mount $2 /mnt/esp
 
 pacstrap /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode zsh neovim pipewire pipewire-alsa pipewire-jack pipewire-pulse networkmanager grub efibootmgr
