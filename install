@@ -77,6 +77,7 @@ cat << EOF | arch-chroot /mnt
   grub-mkconfig -o /boot/grub/grub.cfg
   useradd -m $3 -s /bin/zsh
   echo "%$3 ALL=(ALL:ALL) ALL" | EDITOR='tee -a' visudo
+  systemctl enable NetworkManager.service
 EOF
 
 clear
@@ -84,7 +85,8 @@ clear
 echo -e "${CYA}"
 echo " 1. run 'passwd'"
 echo " 2. run 'passwd $3'"
-echo " 3. "
+echo " 3. exit chroot and power off"
+echo -e "${NOC}"
 
 arch-chroot /mnt
 
