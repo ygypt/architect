@@ -72,12 +72,12 @@ cat << EOF | arch-chroot /mnt
   echo ychor >> /etc/hostname
   touch /etc/hosts
   echo -e "127.0.0.1\tlocalhost\n::\t\tlocalhost\n127.0.0.1\tychor" | tee /etc/hosts
-  grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=ESP --removable
-  echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
-  grub-mkconfig -o /boot/grub/grub.cfg
   useradd -m $3 -s /bin/zsh
   echo "%$3 ALL=(ALL:ALL) ALL" | EDITOR='tee -a' visudo
   systemctl enable NetworkManager.service
+  grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=ESP --removable
+  echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
+  grub-mkconfig -o /boot/grub/grub.cfg
 EOF
 
 clear
@@ -85,7 +85,7 @@ clear
 echo -e "${CYA}"
 echo " 1. run 'passwd'"
 echo " 2. run 'passwd $3'"
-echo " 3. exit chroot and power off"
+echo " 3. exit chroot and poweroff"
 echo -e "${NOC}"
 
 arch-chroot /mnt
