@@ -74,6 +74,7 @@ cat << EOF | arch-chroot /mnt
   echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
   grub-mkconfig -o /boot/grub/grub.cfg
   chsh -s /bin/zsh
+  pacman -Rsn bash
 EOF
 
 arch-chroot /mnt
