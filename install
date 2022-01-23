@@ -73,8 +73,6 @@ cat << EOF | arch-chroot /mnt
   grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=ESP --removable
   echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
   grub-mkconfig -o /boot/grub/grub.cfg
-  chsh -s /bin/zsh
-  pacman -Rsn bash
 EOF
 
 arch-chroot /mnt
