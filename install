@@ -1,7 +1,5 @@
 #!/bin/bash
 
-clear
-
 # colors
 NOC='\033[0m'       # Reset
 BLA='\033[0;30m'    # Black
@@ -13,16 +11,18 @@ PUR='\033[0;35m'    # Purple
 CYA='\033[0;36m'    # Cyan
 WHI='\033[0;37m'    # White
 
+clear
+
 # arg checker
 whoops () {
 	echo -e "${WHI}$1 args provided${NOC}"
 	echo "run 'bash help'"
 	exit 1
 }
-if [ $# -lt 2]; then
+if [ $# -lt 3 ]; then
 	whoops "too few"
 fi
-if [ $# -gt 2 ]; then
+if [ $# -gt 3 ]; then
 	whoops "too many"
 fi
 
@@ -56,7 +56,7 @@ mkdir /mnt/efi
 mkfs.fat -F 32 $2
 mount $2 /mnt/efi
 
-pacstrap /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode zsh neovim pipewire pipewire-alsa pipewire-jack pipewire-pulse networkmanager grub efibootmgr
+pacstrap /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode zsh neovim pipewire pipewire-alsa pipewire-jack pipewire-pulse networkmanager grub efibootmgr vim
 
 genfstab -U /mnt >> /mnt/etc/fstab
 
@@ -73,7 +73,16 @@ cat << EOF | arch-chroot /mnt
   grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=ESP --removable
   echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
   grub-mkconfig -o /boot/grub/grub.cfg
+  useradd -m $3 -s /bin/zsh
+  echo "%$3 ALL=(ALL:ALL) ALL" | EDITOR='tee -a' visudo
 EOF
+
+clear
+
+echo -e "${CYA}"
+echo " 1. run 'passwd'"
+echo " 2. run 'passwd $3'"
+echo " 3. "
 
 arch-chroot /mnt
 
