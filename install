@@ -69,6 +69,8 @@ cat << EOF | arch-chroot /mnt
   echo ychor >> /etc/hostname
   passwd
   grub-install --target=x86_64-efi --efi-directory=/esp --bootloader-id=GRUB
+  echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
+  grub-mkconfig -o /boot/grub
 EOF
 
 #inarch () {
