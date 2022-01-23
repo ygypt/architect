@@ -70,6 +70,8 @@ cat << EOF | arch-chroot /mnt
   echo KEYMAP=us >> /etc/vconsole.conf
   touch /etc/hostname
   echo ychor >> /etc/hostname
+  touch /etc/hosts
+  echo -e "127.0.0.1\tlocalhost\n::\tlocalhost\n127.0.0.1\tychor" | tee /etc/hosts
   grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=ESP --removable
   echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
   grub-mkconfig -o /boot/grub/grub.cfg
