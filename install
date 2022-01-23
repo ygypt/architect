@@ -47,6 +47,9 @@ done
 # install
 #
 
+loadkeys us
+timedatectl set-ntp true
+
 mkfs.ext4 $1
 mount $1 /mnt
 mkdir /mnt/efi
@@ -67,11 +70,12 @@ cat << EOF | arch-chroot /mnt
   echo KEYMAP=us >> /etc/vconsole.conf
   touch /etc/hostname
   echo ychor >> /etc/hostname
-  passwd
   grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB
   echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
   grub-mkconfig -o /boot/grub
 EOF
+
+arch-chroot /mnt
 
 #inarch () {
 #       if [ $1 -eq 0 ]; then
