@@ -12,18 +12,20 @@ bootconf
 ##### scripts:
 help
 
-root
-user
-pkg
-boot
-full-install
-  $rootconf $userconf $pkgconf $bootconf
++ root
++ user
++ pkg
++ boot
++ custom
++ full-install
 
 ##### ex:
 ```
 root zen
 ```
-runs `root` script with the `zen` config within
-`rootconf` directory as its argument
+runs `root` script with `rootconf/zen` as its argument
 
-full-install zen kairo awesome grub
+```
+full-install --root zen --user kairo --pkg awesome --boot grub --custom dotfiles
+```
+runs all 5 scripts in the order specified, passing each respective conf
