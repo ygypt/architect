@@ -24,7 +24,7 @@ sub clr {
 }
 
 sub bar {
-  my $symbol = "━";
+  my $symbol = "─";
   if (@_) { $symbol = @_[0]; }
   my $cols = `tput cols`;
   my $bar = "$symbol" x ($cols - 2);
