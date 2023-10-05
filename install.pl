@@ -20,7 +20,7 @@ sub clr {
   
   bar_mid();
   label("$menu_title");
-  bar_mid("╌");
+  bar_mid("-");
 }
 
 sub bar {
@@ -42,7 +42,7 @@ sub label {
   my $text_len = length($text);
   my $blank_len = $cols - $text_len - 3; # symbols on l/r and space on left
   my $blank_bar = " " x $blank_len;
-  say("┃ $text$blank_bar┃");
+  say("│ $text$blank_bar│");
 }
 sub label_full {
   my ($text) = @_;
