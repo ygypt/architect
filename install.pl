@@ -1,8 +1,8 @@
 #!/bin/perl
 use strict;
 use 5.010;
-use utf8;
-use open qw(:std :utf8);
+#use utf8;
+#use open qw(:std :utf8);
 
 sub clr {
   my ($menu_title) = @_;
