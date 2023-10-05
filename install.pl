@@ -58,20 +58,20 @@ while(1){
   label("Create a partition for '/'. Do not create home, it will be a btrfs subvolume");
   label("Create a partition for '/efi' if it does not already exist");
   label("");
-  label("What would you like to do?");
-  label("1: Create disk partitions (cfdisk)");
-  label("2: Format disk (mkfs)");
+  label("What would you like me to do?");
+  label("'create'     > Create disk partitions (cfdisk)");
+  label("'format'     > Format disk (mkfs)");
   bar_bot();
-  print("Type number and press enter: ");
+  print("Type your command and press enter: ");
 
-  chomp(my $menu = <>);
+  chomp(my $cmd = <>);
   
-  if ($menu == 1) {
+  if ($cmd == 1) {
     partition_menu();
     next;
   }
   
-  if ($menu == 2) {
+  if ($cmd == 2) {
     format_menu();
     next;
   }
@@ -81,7 +81,15 @@ while(1){
 sub partition_menu {
   while(1) {
     clr("Partition Menu");
-    print("Type /dev/\'device name\' or type 'back': ");
+    label("Create a partition for the bootloader. If there is already a bootloader");
+    label("on your machine, you may skip this step unless you expect to run out of");
+    label("space in the partition. It is reccomended to allocate at least 1G to");
+    label("dual boot systems.");
+    label("");
+    label("Next, create a partition for btrfs. The root/home split will be handeled");
+    label("by btrfs subvolumes. Do not create a seperate home partition!");
+    bar_bot();
+    print("Type /dev/'device-name' or type 'back': ");
     
     chomp(my $dev = <>);
     
@@ -99,24 +107,42 @@ sub partition_menu {
 
 sub format_menu {
   while(1) {
-    format_esp();
-    format_root();
+    clr("Format Menu");
+    label("If the ESP was just created, I will need to format it to FAT32. If your");
+    label("machine already has a bootloader, don't format it. Regardless, I will");
+    label("need to format the main partition to btrfs.");
+    label("")
+    label("What would you like me to do?");
+    label("> esp        select a drive to format to FAT32");
+    label("> btrfs      select a drive to format to btrfs");
+    label("> back")
+    bar_bot();
+    print("Type a command and press enter: ");
+
+    chomp(my $cmd = <>);
+
+    if ($dev eq "back") {
+      return;
+    }
+
+    if ($cmd eq "esp") { format_esp(); }
+    if ($cmd eq "btrfs") { format_root(); }
   }
 }
 
 
 sub format_esp {
   while(1) {
-    clr("Format Menu - FAT32");
-    label("First we will format the ESP to FAT32");
+    clr("Format Menu - EFI System Partition");
+    label("Can I format a partition to FAT32 for you?");
+    label("> path/to/device");
+    label("> back");
     bar_bot();
-    
-    say("(you may type 'skip' to skip this step)");
-    print("Enter the /dev/device_name for ESP: ");
+    print("Type a command and press enter: ");
     
     chomp(my $dev = <>);
     
-    if ($dev eq "skip") {
+    if ($dev eq "back") {
       return;
     }
 
@@ -133,16 +159,16 @@ sub format_esp {
 
 sub format_root {
   while(1) {
-    clr("Format Menu - btrfs");
-    label("Next we will format the btrfs partition");
+    clr("Format Menu - B-Tree Filesystem");
+    label("Can I format a partition to btrfs for you?");
+    label("> path/to/device");
+    label("> back");
     bar_bot();
-
-    say("(you may type 'skip' to skip this step)");
-    print("Enter the /dev/device_name for btrfs: ");
+    print("Type a command and press enter: ");
     
     chomp(my $dev = <>);
     
-    if ($dev eq "skip") {
+    if ($dev eq "back") {
       return;
     }
 
