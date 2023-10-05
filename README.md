@@ -2,12 +2,12 @@
 
 *interactive lil install script for arch*
 
-fs: btrfs with snapshots
-shell: zsh
-editor: nvim with nvchad
-display server: wayland
-window manager: hyprland
-terminal: kitty
++ fs: btrfs with snapshots
++ shell: zsh
++ editor: nvim with nvchad
++ display server: wayland
++ window manager: hyprland
++ terminal: kitty
 
 clones my dotfiles and runs the install script
 
