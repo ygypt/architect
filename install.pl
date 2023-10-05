@@ -59,45 +59,43 @@ while(1){
   label("Create a partition for '/efi' if it does not already exist");
   label("");
   label("What would you like me to do?");
-  label("'create'     > Create disk partitions (cfdisk)");
-  label("'format'     > Format disk (mkfs)");
+  label(" 'create'    Create disk partitions (cfdisk)");
+  label(" 'format'    Format disk partitions (mkfs)");
+  label(" 'exit'");
   bar_bot();
   print("Type your command and press enter: ");
 
   chomp(my $cmd = <>);
-  
-  if ($cmd == 1) {
-    partition_menu();
-    next;
-  }
-  
-  if ($cmd == 2) {
-    format_menu();
-    next;
+ 
+  if ($cmd eq "create") { partition_menu(); }
+  if ($cmd eq "format") { format_menu(); }
+  if ($cmd eq "exit") {
+    system("clear");
+    last;
   }
 }
 
 
 sub partition_menu {
   while(1) {
-    clr("Partition Menu");
-    label("Create a partition for the bootloader. If there is already a bootloader");
-    label("on your machine, you may skip this step unless you expect to run out of");
-    label("space in the partition. It is reccomended to allocate at least 1G to");
-    label("dual boot systems.");
+    clr("Create Partitions");
+    label("I can create a partition for your bootloader if you don't have one already. I can");
+    label("also partition btrfs to your drive so that you can keep your files safe with snapshots");
+    label("snapshots. Make sure not to partition home seperately! That's what subvolumes are for!");
     label("");
-    label("Next, create a partition for btrfs. The root/home split will be handeled");
-    label("by btrfs subvolumes. Do not create a seperate home partition!");
+    label("May I create partitions on one of your devices?");
+    label(" 'path/to/device'");
+    label(" 'back'");
     bar_bot();
     print("Type /dev/'device-name' or type 'back': ");
     
-    chomp(my $dev = <>);
+    chomp(my $cmd = <>);
     
-    if ($dev eq "back") {
+    if ($cmd eq "back") {
       return;
     }
     
-    if (system("cfdisk $dev")) {
+    if (system("cfdisk $cmd")) {
       print("Press enter to continue...");
       <>;
     }
@@ -107,26 +105,25 @@ sub partition_menu {
 
 sub format_menu {
   while(1) {
-    clr("Format Menu");
+    clr("Format Partitions");
     label("If the ESP was just created, I will need to format it to FAT32. If your");
     label("machine already has a bootloader, don't format it. Regardless, I will");
     label("need to format the main partition to btrfs.");
-    label("")
+    label("");
     label("What would you like me to do?");
-    label("> esp        select a drive to format to FAT32");
-    label("> btrfs      select a drive to format to btrfs");
-    label("> back")
+    label(" 'esp'     Select a drive to format to FAT32");
+    label(" 'btrfs'   Select a drive to format to btrfs");
+    label(" 'back'");
     bar_bot();
     print("Type a command and press enter: ");
 
     chomp(my $cmd = <>);
 
-    if ($dev eq "back") {
+    if ($cmd eq "esp")    { format_esp(); }
+    if ($cmd eq "btrfs")  { format_root(); }
+    if ($cmd eq "back") {
       return;
     }
-
-    if ($cmd eq "esp") { format_esp(); }
-    if ($cmd eq "btrfs") { format_root(); }
   }
 }
 
@@ -134,19 +131,19 @@ sub format_menu {
 sub format_esp {
   while(1) {
     clr("Format Menu - EFI System Partition");
-    label("Can I format a partition to FAT32 for you?");
-    label("> path/to/device");
-    label("> back");
+    label("May I format a partition to FAT32 for you?");
+    label(" 'path/to/device'");
+    label(" 'back'");
     bar_bot();
     print("Type a command and press enter: ");
     
-    chomp(my $dev = <>);
+    chomp(my $cmd = <>);
     
-    if ($dev eq "back") {
+    if ($cmd eq "back") {
       return;
     }
 
-    if (system("mkfs.fat -F32 $dev")) {
+    if (system("mkfs.fat -F32 $cmd")) {
       print("Press enter to continue...");
       <>;
       next;
@@ -160,19 +157,19 @@ sub format_esp {
 sub format_root {
   while(1) {
     clr("Format Menu - B-Tree Filesystem");
-    label("Can I format a partition to btrfs for you?");
-    label("> path/to/device");
-    label("> back");
+    label("May I format a partition to btrfs for you?");
+    label(" 'path/to/device'");
+    label(" 'back'");
     bar_bot();
     print("Type a command and press enter: ");
     
-    chomp(my $dev = <>);
+    chomp(my $cmd = <>);
     
-    if ($dev eq "back") {
+    if ($cmd eq "back") {
       return;
     }
 
-    if (system("mkfs.btrfs $dev")) {
+    if (system("mkfs.btrfs $cmd")) {
       print("Press enter to continue...");
       <>;
       next;
