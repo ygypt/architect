@@ -1,8 +1,8 @@
 #!/bin/perl
 use strict;
 use 5.010;
-#use utf8;
-#use open qw(:std :utf8);
+use utf8;
+use open qw(:std :utf8);
 
 sub clr {
   my ($menu_title) = @_;
@@ -32,9 +32,9 @@ sub bar {
 }
 
 sub bar_flat  { say("━",bar(@_),"━"); }
-sub bar_top   { say("┏",bar(@_),"┓"); }
-sub bar_bot   { say("┗",bar(@_),"┛"); }
-sub bar_mid   { say("┣",bar(@_),"┫"); }
+sub bar_bot   { say("└",bar(@_),"┘"); }
+sub bar_mid   { say("├",bar(@_),"┤"); }
+sub bar_top   { say("┌",bar(@_),"┐"); }
 
 sub label {
   my ($text) = @_;
