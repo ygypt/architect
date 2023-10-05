@@ -90,7 +90,7 @@ sub partiiton_menu() {
     }
     
     if (system("cfdisk $dev")) {
-      print("Press enter to continue: ");
+      print("Press enter to continue...");
       <>;
     }
   }
@@ -99,11 +99,20 @@ sub partiiton_menu() {
 
 sub format_menu() {
   while(1) {
-    clr("Format Menu");
-    say("First we will format the ESP to FAT32");
-    say("");
-    say("Type 'skip' if you already have an ESP on your machine");
-    print("Otherwise, enter the /dev/device_name of your ESP: ");
+    format_esp();
+    format_root();
+  }
+}
+
+
+sub format_esp {
+  while(1) {
+    clr("Format Menu - FAT32");
+    label("First we will format the ESP to FAT32");
+    bar_bot();
+    
+    say("(you may type 'skip' to skip this step)");
+    print("Enter the /dev/device_name for ESP: ");
     
     chomp(my $dev = <>);
     
@@ -111,16 +120,41 @@ sub format_menu() {
       return;
     }
 
-    if (system("mkfs.fat -F 32 $dev")) {
-      print("Press enter to continue: ");
+    if (system("mkfs.fat -F32 $dev")) {
+      print("Press enter to continue...");
       <>;
+      next;
     }
+
+    return;
   }
 }
 
 
+sub format_root {
+  while(1) {
+    clr("Format Menu - btrfs");
+    label("Next we will format the btrfs partition");
+    bar_bot();
 
+    say("(you may type 'skip' to skip this step)");
+    print("Enter the /dev/device_name for btrfs: ");
+    
+    chomp(my $dev = <>);
+    
+    if ($dev eq "skip") {
+      return;
+    }
 
+    if (system("mkfs.btrfs $dev")) {
+      print("Press enter to continue...");
+      <>;
+      next;
+    }
+
+    return;
+  }
+}
 
 
 
