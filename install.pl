@@ -78,7 +78,7 @@ while(1){
 }
 
 
-sub partititon_menu {
+sub partition_menu {
   while(1) {
     clr("Partition Menu");
     print("Type /dev/\'device name\' or type 'back': ");
