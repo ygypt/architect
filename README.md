@@ -1,31 +1,14 @@
 # architect
 
-*simple install scripts for arch*
+*interactive lil install script for arch*
 
-### contents
-##### configs:
-rootconf
-userconf
-pkgconf
-bootconf
+fs: btrfs with snapshots
+shell: zsh
+editor: nvim with nvchad
+display server: wayland
+window manager: hyprland
+terminal: kitty
 
-##### scripts:
-help
+clones my dotfiles and runs the install script
 
-+ root
-+ user
-+ pkg
-+ boot
-+ custom
-+ full-install
-
-##### ex:
-```
-root zen
-```
-runs `root` script with `rootconf/zen` as its argument
-
-```
-full-install --root zen --user kairo --pkg awesome --boot grub --custom dotfiles
-```
-runs all 5 scripts in the order specified, passing each respective conf
+adds all the other lil goodies like wifi and bluetooth, firefox and discord, standard desktop gui apps like a file manager and stuff, dev stuff like cargo, asdf, docker, etc
