@@ -9,6 +9,8 @@
 + window manager: hyprland
 + terminal: kitty
 
-clones my dotfiles and runs the install script
+uses a custom goofy graphics lib to interactively install arch the way i like it
 
-adds all the other lil goodies like wifi and bluetooth, firefox and discord, standard desktop gui apps like a file manager and stuff, dev stuff like cargo, asdf, docker, etc
+this is not all-purpose. if ur not me u probly dont want to use this
+
+adds all the other lil goodies like wifi and bluetooth, firefox and discord, standard desktop gui apps like a file manager and stuff, dev stuff like cargo, asdf, docker, it clones my dotfiles and symlinkt them too, its just all around nifty
