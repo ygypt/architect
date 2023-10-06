@@ -66,13 +66,27 @@ sub install {
   clr("Install");
   
   if ( `mount | grep /mnt` eq ""
-    or `mount | grep /mnt/efi` eq ""
-    or `mount | grep /mnt/home` eq "") {
+    or `mount | grep /mnt/efi` eq "") {
     label("You must mount /mnt, /mnt/efi, and /mnt/home");
     bar_bot();
     failure_dialog();
     return;
   }
+
+  if (`mount | grep /mnt/home` eq "") {
+    while(1) {
+      label("You don't have a dedicated /home, is that okay?");
+      bar_bot();
+      print("y/n: ");
+
+      chomp(my $cmd = <>);
+
+      if ($cmd eq "y") { last; }
+      if ($cmd eq "n") { return; }
+    }
+  }
+
+
 
   system("pacstrap -K /mnt $packages");
   system("genfstab -U /mnt >> /mnt/etc/fstab");
