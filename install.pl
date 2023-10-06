@@ -151,7 +151,7 @@ sub format_menu {
 
 
 sub format_esp {
-  my @title = "Format Partitions - EFI System Partition";
+  my $title = "Format Partitions - EFI System Partition";
   while(1) {
     clr($title);
     label("May I format a partition to FAT32 for you?");
@@ -176,7 +176,7 @@ sub format_esp {
 
 
 sub format_ext4 {
-  my @title = "Format Partitions - Ext4 Filesystem";
+  my $title = "Format Partitions - Ext4 Filesystem";
   while(1) {
     clr($title);
     label("May I format a partition to ext5 for you?");
