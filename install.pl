@@ -80,12 +80,11 @@ sub install {
   system("zsh /root/architect/chroot.zsh");
   
   chroot_passwd();
-  system("shutdown &");
+  exec("reboot");
   exit();
 }
 
 sub chroot_passwd {
-  clr("Install - Set Passwords");
   while(1) {
     bar_top();
     label("Which passwords would you like me to set?");
