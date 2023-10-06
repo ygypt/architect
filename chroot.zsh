@@ -23,9 +23,12 @@ cat << EOF | arch-chroot /mnt
   echo -e "127.0.0.1\tlocalhost\n::\t\tlocalhost\n127.0.0.1\tGameCuboid" | tee /etc/hosts
   useradd -m kairo -s /bin/zsh
   echo "%kairo ALL=(ALL:ALL) ALL" | EDITOR='tee -a' visudo
+  touch /etc/systemd/system/getty@tty1.service.d/autologin.conf
+  echo -e "Environment=XDG_SESSION_TYPE=x11\n[Service]\nExecStart=\nExecStart=-/sbin/agetty -o '-p -f -- \\\\u' --noclear --autologin kairo %I $TERM" | tee /etc/systemd/system/getty@tty1.service.d/autologin.conf
   systemctl enable NetworkManager.service
   grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Grub --removable
   echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
   grub-mkconfig -o /boot/grub/grub.cfg
   grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Grub --removable
+  chsh -s /bin/zsh
 EOF
