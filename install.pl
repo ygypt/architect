@@ -89,29 +89,12 @@ sub install {
   exit();
 }
 
-sub chroot_passwd {
-  while(1) {
-    bar_top();
-    label("Which passwords would you like me to set?");
-    label(" 'root'");
-    label(" 'kairo'");
-    label(" 'continue'");
-    bar_bot();
-    print("> ");
 
-    chomp(my $cmd = <>);
-
-    if ($cmd eq "root") { system("arch-chroot /mnt passwd"); }
-    if ($cmd eq "kairo") { system("arch-chroot kairo passwd"); }
-    if ($cmd eq "continue") { return; }
-  }
-}
-
-
-
-
-
-
+################
+### -------- ###
+### graphics ###
+### -------- ###
+################
 sub clr {
   my ($menu_title) = @_;
 
@@ -180,6 +163,12 @@ sub failure_dialog {
 
 
 
+
+################
+### -------- ###
+### submenus ###
+### -------- ###
+################
 sub partition_menu {
   while(1) {
     clr("Create Partitions");
