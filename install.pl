@@ -223,8 +223,9 @@ sub mount_menu {
 
 
 sub mount_root {
+  my $title = "Mount Partitions - Root";
   while(1) {
-    clr("Mount Partitions - Root");
+    clr($title);
     label("I need the partition path for your desired root");
     label(" '/path/to/partition'");
     label(" 'back'");
@@ -234,7 +235,7 @@ sub mount_root {
     chomp(my $cmd = <>);
     
     if ($cmd eq "back") { return; }
-    unless (system("mount $cmd /mnt")) { success_dialog(); next; }
+    unless (system("mount $cmd /mnt")) { success_dialog($title); next; }
 
     failure_dialog();
   }
@@ -242,8 +243,9 @@ sub mount_root {
 
 
 sub mount_esp {
+  my $title = "Mount Partitions - EFI System Partition";
   while(1) {
-    clr("Mount Partitions - EFI System Partition");
+    clr($title);
     if (`mount | grep /mnt` eq "") {
       label("There is nothing mounted to /mnt");
       label("Because of this, the ESP cannot yet be mounted, as it");
@@ -264,7 +266,7 @@ sub mount_esp {
     if ($cmd eq "back") { return; }
 
     unless (-d "/mnt/efi") { system("mkdir /mnt/efi"); }
-    unless (system("mount $cmd /mnt/efi")) { success_dialog(); next; }
+    unless (system("mount $cmd /mnt/efi")) { success_dialog($title); next; }
 
     failure_dialog();
   }
@@ -272,8 +274,9 @@ sub mount_esp {
 
 
 sub mount_home {
+  my $title = "Mount Partitions - Home Partition";
   while(1) {
-    clr("Mount Partitions - Home Partition");
+    clr($title);
     if (`mount | grep /mnt` eq "") {
       label("There is nothing mounted to /mnt");
       label("Because of this, the home cannot yet be mounted, as it");
@@ -293,8 +296,15 @@ sub mount_home {
     
     if ($cmd eq "back") { return; }
     unless (-d "/mnt/home") { system("mkdir /mnt/home"); }
-    unless (system("mount $cmd /mnt/home")) { success_dialog(); next; }
+    unless (system("mount $cmd /mnt/home")) { success_dialog($title); next; }
 
     failure_dialog();
   }
 }
+
+
+
+
+
+
+
