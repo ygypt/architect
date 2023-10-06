@@ -79,8 +79,13 @@ sub install {
   # run my chroot script bc doing this in perl would be a headache
   system("zsh /root/architect/chroot.zsh");
   
-  chroot_passwd();
-  exec("reboot");
+  bar_top();
+  label("Run 'arch-chroot /mnt'");
+  label("Run 'passwd'");
+  label("Run 'passwd kairo'");
+  label("Run 'reboot'");
+  bar_bot();
+
   exit();
 }
 
@@ -96,7 +101,7 @@ sub chroot_passwd {
 
     chomp(my $cmd = <>);
 
-    if ($cmd eq "root") { system("arch-chroot passwd"); }
+    if ($cmd eq "root") { system("arch-chroot /mnt passwd"); }
     if ($cmd eq "kairo") { system("arch-chroot kairo passwd"); }
     if ($cmd eq "continue") { return; }
   }
