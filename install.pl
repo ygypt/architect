@@ -59,16 +59,20 @@ while(1){
   label("Create a partition for '/efi' if it does not already exist");
   label("");
   label("What would you like me to do?");
-  label(" 'create'    Create disk partitions (cfdisk)");
-  label(" 'format'    Format disk partitions (mkfs)");
+  label(" 'partition'     Create disk partitions (cfdisk)");
+  label(" 'format'        Format disk partitions (mkfs)");
+  label(" 'mount'         Mount paritions to the current filesystem");
+  label(" 'install'       Install that shit boi");
   label(" 'exit'");
   bar_bot();
   print("Type your command and press enter: ");
 
   chomp(my $cmd = <>);
  
-  if ($cmd eq "create") { partition_menu(); }
+  if ($cmd eq "partition") { partition_menu(); }
   if ($cmd eq "format") { format_menu(); }
+  if ($cmd eq "mount") { mount_menu(); }
+  if ($cmd eq "install") { install_menu(); }
   if ($cmd eq "exit") {
     system("clear");
     last;
@@ -80,14 +84,13 @@ sub partition_menu {
   while(1) {
     clr("Create Partitions");
     label("I can create a partition for your bootloader if you don't have one already. I can");
-    label("also partition btrfs to your drive so that you can keep your files safe with snapshots");
-    label("snapshots. Make sure not to partition home seperately! That's what subvolumes are for!");
+    label("recommend partitioning the remaining space as 'Linux Filesystem'");
     label("");
     label("May I create partitions on one of your devices?");
     label(" 'path/to/device'");
     label(" 'back'");
     bar_bot();
-    print("Type /dev/'device-name' or type 'back': ");
+    print("Type your command and press enter: ");
     
     chomp(my $cmd = <>);
     
@@ -108,11 +111,11 @@ sub format_menu {
     clr("Format Partitions");
     label("If the ESP was just created, I will need to format it to FAT32. If your");
     label("machine already has a bootloader, don't format it. Regardless, I will");
-    label("need to format the main partition to btrfs.");
+    label("need to format the remaining partitions to btrfs.");
     label("");
     label("What would you like me to do?");
-    label(" 'esp'     Select a drive to format to FAT32");
-    label(" 'btrfs'   Select a drive to format to btrfs");
+    label(" 'esp'     Select a partition to format to FAT32");
+    label(" 'btrfs'   Select a partition to format to btrfs");
     label(" 'back'");
     bar_bot();
     print("Type a command and press enter: ");
@@ -130,18 +133,16 @@ sub format_menu {
 
 sub format_esp {
   while(1) {
-    clr("Format Menu - EFI System Partition");
+    clr("Format Partitions - EFI System Partition");
     label("May I format a partition to FAT32 for you?");
-    label(" 'path/to/device'");
+    label(" 'path/to/partition'");
     label(" 'back'");
     bar_bot();
     print("Type a command and press enter: ");
     
     chomp(my $cmd = <>);
     
-    if ($cmd eq "back") {
-      return;
-    }
+    if ($cmd eq "back") { return; }
 
     if (system("mkfs.fat -F32 $cmd")) {
       print("Press enter to continue...");
@@ -156,18 +157,16 @@ sub format_esp {
 
 sub format_root {
   while(1) {
-    clr("Format Menu - B-Tree Filesystem");
+    clr("Format Partitions - B-Tree Filesystem");
     label("May I format a partition to btrfs for you?");
-    label(" 'path/to/device'");
+    label(" 'path/to/partition'");
     label(" 'back'");
     bar_bot();
     print("Type a command and press enter: ");
     
     chomp(my $cmd = <>);
     
-    if ($cmd eq "back") {
-      return;
-    }
+    if ($cmd eq "back") { return; }
 
     if (system("mkfs.btrfs $cmd")) {
       print("Press enter to continue...");
@@ -180,7 +179,74 @@ sub format_root {
 }
 
 
+sub mount_menu {
+  while(1) {
+    clr("Mount Partitions");
+    label("I will mount your partitions. Do these in order from top");
+    label("to bottom. Shall I begin mounting?");
+    label(" 'root'    Mount root partition first");
+    label(" 'esp'     Mount bootloader to /efi");
+    label(" 'home'    Mount home partition (optional)");
+    label(" 'back'");
+    bar_bot();
+    print("Type a command and press enter: ");
+
+    chomp(my $cmd = <>);
+    
+    if ($cmd eq "root") { mount_root(); }
+    if ($cmd eq "esp") { mount_esp(); }
+    if ($cmd eq "home") { mount_home(); }
+    if ($cmd eq "back") { return; }
+  }
+}
 
 
+sub mount_root {
+  while(1) {
+    clr("Mount Partitions - Root");
+    label("I need the partition path for your desired root");
+    label(" '/path/to/partition'");
+    label(" 'back'");
+    bar_bot();
+    print("Type a command and press enter: ");
+
+    chomp(my $cmd = <>);
+    
+    if ($cmd eq "back") { return; }
+    unless (system("mount $cmd /mnt")) { return; }
+  }
+}
 
 
+sub mount_esp {
+  while(1) {
+    clr("Mount Partitions - EFI System Partition");
+    label("I need the partition path for your desired esp");
+    label(" '/path/to/partition'");
+    label(" 'back'");
+    bar_bot();
+    print("Type a command and press enter: ");
+
+    chomp(my $cmd = <>);
+    
+    if ($cmd eq "back") { return; }
+    unless (system("mount $cmd /mnt/efi")) { return; }
+  }
+}
+
+
+sub mount_home {
+  while(1) {
+    clr("Mount Partitions - Home Partition");
+    label("I need the partition path for your desired home");
+    label(" '/path/to/partition'");
+    label(" 'back'");
+    bar_bot();
+    print("Type a command and press enter: ");
+
+    chomp(my $cmd = <>);
+    
+    if ($cmd eq "back") { return; }
+    unless (system("mount $cmd /mnt/home")) { return; }
+  }
+}
