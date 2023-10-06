@@ -63,7 +63,10 @@ sub success_dialog {
   <>;
 }
 sub failure_dialog {
-  print("Something went wrong. Press enter to continue...");
+  my $text = "Something went wrong :(";
+  if (@_) { $text = @_[0]; }
+  say($text);
+  print("Press enter to continue...");
   <>;
 }
 
@@ -179,7 +182,7 @@ sub format_ext4 {
   my $title = "Format Partitions - Ext4 Filesystem";
   while(1) {
     clr($title);
-    label("May I format a partition to ext5 for you?");
+    label("May I format a partition to ext4 for you?");
     label(" 'path/to/partition'");
     label(" 'back'");
     bar_bot();
@@ -241,6 +244,15 @@ sub mount_root {
 sub mount_esp {
   while(1) {
     clr("Mount Partitions - EFI System Partition");
+    if (`mount | grep /mnt` eq "") {
+      label("There is nothing mounted to /mnt");
+      label("Because of this, the ESP cannot yet be mounted, as it");
+      label("must be mounted to /mnt/efi");
+      label("Please mount 'root' first.");
+      bar_bot();
+      failure_dialog();
+      return;
+    }
     label("I need the partition path for your desired esp");
     label(" '/path/to/partition'");
     label(" 'back'");
@@ -250,8 +262,10 @@ sub mount_esp {
     chomp(my $cmd = <>);
     
     if ($cmd eq "back") { return; }
+
+    unless (-d "/mnt/efi") { system("mkdir /mnt/efi"); }
     unless (system("mount $cmd /mnt/efi")) { success_dialog(); next; }
-    
+
     failure_dialog();
   }
 }
@@ -260,6 +274,15 @@ sub mount_esp {
 sub mount_home {
   while(1) {
     clr("Mount Partitions - Home Partition");
+    if (`mount | grep /mnt` eq "") {
+      label("There is nothing mounted to /mnt");
+      label("Because of this, the home cannot yet be mounted, as it");
+      label("must be mounted to /mnt/home");
+      label("Please mount 'root' first.");
+      bar_bot();
+      failure_dialog();
+      return;
+    }
     label("I need the partition path for your desired home");
     label(" '/path/to/partition'");
     label(" 'back'");

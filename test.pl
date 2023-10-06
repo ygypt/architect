@@ -2,4 +2,6 @@
 use strict;
 use 5.010;
 
-say("fucko \\mcgeee");
+unless (system("mount | grep /poop")) {
+  say("mount says that poop exist");
+}
