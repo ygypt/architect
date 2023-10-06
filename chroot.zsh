@@ -31,4 +31,5 @@ cat << EOF | arch-chroot /mnt
   grub-mkconfig -o /boot/grub/grub.cfg
   grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Grub --removable
   chsh -s /bin/zsh
+  chsh -s /bin/zsh kairo
 EOF

@@ -21,6 +21,11 @@ grub
 os-prober
 efibootmgr
 zsh
+git
+ranger
+asdf
+docker
+timeshift
 neovim
 wayland
 kitty
