@@ -2,9 +2,8 @@
 
 *interactive lil install script for arch*
 
-+ fs: btrfs with snapshots
++ fs: ext4 with snapshots
 + shell: zsh
-+ editor: nvim with nvchad
 + display server: wayland
 + window manager: hyprland
 + terminal: kitty
