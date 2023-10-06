@@ -74,29 +74,28 @@ sub install {
     return;
   }
 
-
   system("pacstrap -K /mnt $packages");
   system("genfstab -U /mnt >> /mnt/etc/fstab");
   # run my chroot script bc doing this in perl would be a headache
   system("zsh /root/architect/chroot.zsh");
   
-  
-  clr("Install");
-  label("Set root password");
-  bar_bot();
-  system("arch-chroot passwd");
-  system("");
-  
+  chroot_passwd();
+  system("shutdown &");
+  exit();
 }
 
-sub install_passwd {
+sub chroot_passwd {
+  clr("Install - Set Passwords");
   while(1) {
-    clr("Install - Set Passwords");
+    bar_top();
     label("Which passwords would you like me to set?");
     label(" 'root'");
     label(" 'kairo'");
     label(" 'continue'");
     bar_bot();
+    print("> ");
+
+    chomp(my $cmd = <>);
 
     if ($cmd eq "root") { system("arch-chroot passwd"); }
     if ($cmd eq "kairo") { system("arch-chroot kairo passwd"); }
