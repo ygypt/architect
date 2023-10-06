@@ -4,6 +4,110 @@ use 5.010;
 use utf8;
 use open qw(:std :utf8);
 
+our $packages = "
+base
+base-devel
+linux
+linux-headers
+linux-firmware
+amd-ucode
+mesa
+pipewire
+networkmanager
+bluez
+bluez-utils
+ntfs-3g
+grub
+os-prober
+efibootmgr
+zsh
+neovim
+wayland
+kitty
+hyprland
+";
+#this is the only delimiter that doesnt fuck up my lsp
+$packages =~ s#\n# #g; 
+
+
+#################
+### --------- ###
+### main loop ###
+### --------- ###
+#################
+while(1){
+  clr("Main Menu");
+  label("Create a partition for '/'. Do not create home, it will be a btrfs subvolume");
+  label("Create a partition for '/efi' if it does not already exist");
+  label("");
+  label("What would you like me to do?");
+  label(" 'partition'     Create disk partitions (cfdisk)");
+  label(" 'format'        Format disk partitions (mkfs)");
+  label(" 'mount'         Mount paritions to the current filesystem");
+  label(" 'install'       Install that shit boi");
+  label(" 'exit'");
+  bar_bot();
+  print("Type your command and press enter: ");
+
+  chomp(my $cmd = <>);
+ 
+  if ($cmd eq "partition") { partition_menu(); }
+  if ($cmd eq "format") { format_menu(); }
+  if ($cmd eq "mount") { mount_menu(); }
+  if ($cmd eq "install") { install(); }
+  if ($cmd eq "exit") {
+    system("clear");
+    last;
+  }
+}
+
+
+sub install {
+  clr("Install");
+  
+  if ( `mount | grep /mnt` eq ""
+    or `mount | grep /mnt/efi` eq ""
+    or `mount | grep /mnt/home` eq "") {
+    label("You must mount /mnt, /mnt/efi, and /mnt/home");
+    bar_bot();
+    failure_dialog();
+    return;
+  }
+
+
+  system("pacstrap -K /mnt $packages");
+  system("genfstab -U /mnt >> /mnt/etc/fstab");
+  # run my chroot script bc doing this in perl would be a headache
+  system("zsh /root/architect/chroot.zsh");
+  
+  
+  clr("Install");
+  label("Set root password");
+  bar_bot();
+  system("arch-chroot passwd");
+  system("");
+  
+}
+
+sub install_passwd {
+  while(1) {
+    clr("Install - Set Passwords");
+    label("Which passwords would you like me to set?");
+    label(" 'root'");
+    label(" 'kairo'");
+    label(" 'continue'");
+    bar_bot();
+
+    if ($cmd eq "root") { system("arch-chroot passwd"); }
+    if ($cmd eq "kairo") { system("arch-chroot kairo passwd"); }
+    if ($cmd eq "continue") { return; }
+  }
+}
+
+
+
+
+
 
 sub clr {
   my ($menu_title) = @_;
@@ -55,7 +159,8 @@ sub label_full {
 
 
 sub success_dialog {
-  my ($title) = @_;
+  my $title = "Success!";
+  if (@_) { $title = @_[0]; }
   clr($title);
   label("Success!");
   bar_bot();
@@ -63,43 +168,13 @@ sub success_dialog {
   <>;
 }
 sub failure_dialog {
-  my $text = "Something went wrong :(";
-  if (@_) { $text = @_[0]; }
-  say($text);
+  if (@_) {
+    say(@_[0]);
+  }
   print("Press enter to continue...");
   <>;
 }
 
-#################
-### --------- ###
-### main loop ###
-### --------- ###
-#################
-while(1){
-  clr("Main Menu");
-  label("Create a partition for '/'. Do not create home, it will be a btrfs subvolume");
-  label("Create a partition for '/efi' if it does not already exist");
-  label("");
-  label("What would you like me to do?");
-  label(" 'partition'     Create disk partitions (cfdisk)");
-  label(" 'format'        Format disk partitions (mkfs)");
-  label(" 'mount'         Mount paritions to the current filesystem");
-  label(" 'install'       Install that shit boi");
-  label(" 'exit'");
-  bar_bot();
-  print("Type your command and press enter: ");
-
-  chomp(my $cmd = <>);
- 
-  if ($cmd eq "partition") { partition_menu(); }
-  if ($cmd eq "format") { format_menu(); }
-  if ($cmd eq "mount") { mount_menu(); }
-  if ($cmd eq "install") { install_menu(); }
-  if ($cmd eq "exit") {
-    system("clear");
-    last;
-  }
-}
 
 
 sub partition_menu {
@@ -215,7 +290,7 @@ sub mount_menu {
     chomp(my $cmd = <>);
     
     if ($cmd eq "root") { mount_root(); }
-    if ($cmd eq "esp") { mount_esp(); }
+    if ($cmd eq "esp")  { mount_esp(); }
     if ($cmd eq "home") { mount_home(); }
     if ($cmd eq "back") { return; }
   }
@@ -235,7 +310,7 @@ sub mount_root {
     chomp(my $cmd = <>);
     
     if ($cmd eq "back") { return; }
-    unless (system("mount $cmd /mnt")) { success_dialog($title); next; }
+    unless (system("mount $cmd /mnt")) { success_dialog($title); return; }
 
     failure_dialog();
   }
@@ -266,7 +341,7 @@ sub mount_esp {
     if ($cmd eq "back") { return; }
 
     unless (-d "/mnt/efi") { system("mkdir /mnt/efi"); }
-    unless (system("mount $cmd /mnt/efi")) { success_dialog($title); next; }
+    unless (system("mount $cmd /mnt/efi")) { success_dialog($title); return; }
 
     failure_dialog();
   }
@@ -296,7 +371,7 @@ sub mount_home {
     
     if ($cmd eq "back") { return; }
     unless (-d "/mnt/home") { system("mkdir /mnt/home"); }
-    unless (system("mount $cmd /mnt/home")) { success_dialog($title); next; }
+    unless (system("mount $cmd /mnt/home")) { success_dialog($title); return; }
 
     failure_dialog();
   }
