@@ -292,6 +292,7 @@ sub mount_home {
     chomp(my $cmd = <>);
     
     if ($cmd eq "back") { return; }
+    unless (-d "/mnt/home") { system("mkdir /mnt/home"); }
     unless (system("mount $cmd /mnt/home")) { success_dialog(); next; }
 
     failure_dialog();
