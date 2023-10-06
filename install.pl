@@ -4,6 +4,7 @@ use 5.010;
 use utf8;
 use open qw(:std :utf8);
 
+
 sub clr {
   my ($menu_title) = @_;
 
@@ -23,6 +24,7 @@ sub clr {
   bar_mid("-");
 }
 
+
 sub bar {
   my $symbol = "─";
   if (@_) { $symbol = @_[0]; }
@@ -30,11 +32,11 @@ sub bar {
   my $bar = "$symbol" x ($cols - 2);
   return $bar;
 }
-
 sub bar_flat  { say("━",bar(@_),"━"); }
 sub bar_bot   { say("└",bar(@_),"┘"); }
 sub bar_mid   { say("├",bar(@_),"┤"); }
 sub bar_top   { say("┌",bar(@_),"┐"); }
+
 
 sub label {
   my ($text) = @_;
@@ -52,7 +54,24 @@ sub label_full {
 }
 
 
-# main loop
+sub success_dialog {
+  my ($title) = @_;
+  clr($title);
+  label("Success!");
+  bar_bot();
+  print("Press enter to continue...");
+  <>;
+}
+sub failure_dialog {
+  print("Something went wrong. Press enter to continue...");
+  <>;
+}
+
+#################
+### --------- ###
+### main loop ###
+### --------- ###
+#################
 while(1){
   clr("Main Menu");
   label("Create a partition for '/'. Do not create home, it will be a btrfs subvolume");
@@ -106,34 +125,35 @@ sub partition_menu {
 }
 
 
+
+
 sub format_menu {
   while(1) {
     clr("Format Partitions");
     label("If the ESP was just created, I will need to format it to FAT32. If your");
-    label("machine already has a bootloader, don't format it. Regardless, I will");
-    label("need to format the remaining partitions to btrfs.");
+    label("machine already has bootloader or home partitions, don't format them!");
+    label("Anyways, I will need to format the remaining partitions to ext4.");
     label("");
     label("What would you like me to do?");
     label(" 'esp'     Select a partition to format to FAT32");
-    label(" 'btrfs'   Select a partition to format to btrfs");
+    label(" 'ext4'    Select a partition to format to ext4");
     label(" 'back'");
     bar_bot();
     print("Type a command and press enter: ");
 
     chomp(my $cmd = <>);
 
-    if ($cmd eq "esp")    { format_esp(); }
-    if ($cmd eq "btrfs")  { format_root(); }
-    if ($cmd eq "back") {
-      return;
-    }
+    if ($cmd eq "esp")  { format_esp(); }
+    if ($cmd eq "ext4") { format_ext4(); }
+    if ($cmd eq "back") { return; }
   }
 }
 
 
 sub format_esp {
+  my @title = "Format Partitions - EFI System Partition";
   while(1) {
-    clr("Format Partitions - EFI System Partition");
+    clr($title);
     label("May I format a partition to FAT32 for you?");
     label(" 'path/to/partition'");
     label(" 'back'");
@@ -144,21 +164,22 @@ sub format_esp {
     
     if ($cmd eq "back") { return; }
 
-    if (system("mkfs.fat -F32 $cmd")) {
-      print("Press enter to continue...");
-      <>;
+    unless (system("mkfs.fat -F32 $cmd")) {
+      success_dialog($title);
       next;
     }
-
-    return;
+     
+    print("Something went wrong. Press enter to continue...");
+    <>;
   }
 }
 
 
-sub format_root {
+sub format_ext4 {
+  my @title = "Format Partitions - Ext4 Filesystem";
   while(1) {
-    clr("Format Partitions - B-Tree Filesystem");
-    label("May I format a partition to btrfs for you?");
+    clr($title);
+    label("May I format a partition to ext5 for you?");
     label(" 'path/to/partition'");
     label(" 'back'");
     bar_bot();
@@ -167,16 +188,13 @@ sub format_root {
     chomp(my $cmd = <>);
     
     if ($cmd eq "back") { return; }
+    unless (system("mkfs.ext4 $cmd")) { success_dialog($title); next; }
 
-    if (system("mkfs.btrfs $cmd")) {
-      print("Press enter to continue...");
-      <>;
-      next;
-    }
-
-    return;
+    failure_dialog();
   }
 }
+
+
 
 
 sub mount_menu {
@@ -213,7 +231,9 @@ sub mount_root {
     chomp(my $cmd = <>);
     
     if ($cmd eq "back") { return; }
-    unless (system("mount $cmd /mnt")) { return; }
+    unless (system("mount $cmd /mnt")) { success_dialog(); next; }
+
+    failure_dialog();
   }
 }
 
@@ -230,7 +250,9 @@ sub mount_esp {
     chomp(my $cmd = <>);
     
     if ($cmd eq "back") { return; }
-    unless (system("mount $cmd /mnt/efi")) { return; }
+    unless (system("mount $cmd /mnt/efi")) { success_dialog(); next; }
+    
+    failure_dialog();
   }
 }
 
@@ -247,6 +269,8 @@ sub mount_home {
     chomp(my $cmd = <>);
     
     if ($cmd eq "back") { return; }
-    unless (system("mount $cmd /mnt/home")) { return; }
+    unless (system("mount $cmd /mnt/home")) { success_dialog(); next; }
+
+    failure_dialog();
   }
 }
