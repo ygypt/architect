@@ -30,5 +30,13 @@ cat << EOF | arch-chroot /mnt
   grub-mkconfig -o /boot/grub/grub.cfg
   grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Grub --removable
   chsh -s /bin/zsh
-  chsh -s /bin/zsh kairo
+  cat << EOF | login kairo
+    chsh -s /bin/zsh
+    git config --global user.email "70084790+ygypt@users.noreply.github.com"
+    git config --global user.name "ygypt"
+    mkdir ~/code
+    mkdir ~/code/ygypt
+    git clone https://github.com/ygypt/dotfiles ~/code/ygypt/dotfiles
+    zsh ~/code/ygypt/dotfiles/install.sh
+  EOF
 EOF

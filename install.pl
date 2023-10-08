@@ -13,6 +13,7 @@ linux-firmware
 amd-ucode
 mesa
 pipewire
+wireplumber
 networkmanager
 bluez
 bluez-utils
@@ -22,6 +23,7 @@ os-prober
 efibootmgr
 zsh
 git
+github-cli
 ranger
 docker
 timeshift
@@ -29,6 +31,22 @@ neovim
 wayland
 kitty
 hyprland
+hyprpaper
+waybar
+python-pillow
+gtk2
+gtk3
+gtk4
+rofi
+ttf-sourcecodepro-nerd
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+noto-fonts-extra
+flatpak
+xdg-desktop-portal-hyprland
+grim
+slurp
 ";
 #this is the only delimiter that doesnt fuck up my lsp
 $packages =~ s#\n# #g; 
