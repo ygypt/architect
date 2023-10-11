@@ -108,8 +108,6 @@ sub install {
     }
   }
 
-
-
   system("pacstrap -K /mnt $packages");
   system("genfstab -U /mnt >> /mnt/etc/fstab");
   # run my chroot script bc doing this in perl would be a headache
